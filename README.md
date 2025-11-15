@@ -4,8 +4,6 @@ This project is meant to teach TCP congestion control algorithms through impleme
 
 ## Quick Start
 
-### For Students
-
 1. **Setup** (one time): Install Docker - see [SETUP.md](SETUP.md)
 3. **Testing**: Use the simplified test script:
    ```bash
