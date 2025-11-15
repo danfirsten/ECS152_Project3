@@ -246,10 +246,8 @@ print(f"  Payload size: {len(packet[4:])}")
 
 ## Still Having Issues?
 
-1. **Review ASSIGNMENT.md** - Check protocol specification
-2. **Compare with discussion code** - Week 7 receiver example
-3. **Post on discussion board** - Include error messages and what you've tried
-4. **Office hours** - Bring specific questions and code snippets
+1. **Post on discussion board** - Include error messages and what you've tried
+2. **Office hours** - Bring specific questions and code snippets
 
 ## Quick Reference Commands
 
