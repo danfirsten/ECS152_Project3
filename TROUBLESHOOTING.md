@@ -164,20 +164,19 @@ chmod +x test_sender.sh
 ./test_sender.sh my_sender.py
 ```
 
-```
-
 ### Path issues on Windows
 
 **Symptom:**
+
+```
+file.zip not found
 ```
 
-file.zip not found
-
-````
-
 **Solution:**
+
 - Always run the scripts from the `docker` directory so relative payload paths resolve correctly.
 - Remember each test script accepts an optional payload argument:
+
   ```batch
   cd docker
   test_sender.bat my_sender.py my_payload.zip
