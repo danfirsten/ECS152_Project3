@@ -94,8 +94,9 @@ docker/
 ├── training_profile.sh     # Network emulation script (DO NOT MODIFY)
 ├── docker-script.sh        # Container startup script
 ├── Dockerfile              # Container configuration
+├── skeleton_sender.py      # Skeleton code for a sender
 └── hdd/
-    ├── file.zip            # File to transfer (~5.1 MB)
+    ├── file.zip            # File to transfer (~20 MB)
 ```
 
 ## Network Simulation
