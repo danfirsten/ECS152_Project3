@@ -5,3 +5,5 @@ docker/test_fairness.sh
 *.log
 *.pdf
 .DS_Store
+
+docs/

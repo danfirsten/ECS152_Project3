@@ -1,0 +1,2 @@
+- Chat GPT helped with coming up with the structure of the solution but not the actual code
+- We used Chat GPT to make documentation for each other in Structure.md so it would be easier to communicate to each other what we have in our project

@@ -69,21 +69,35 @@ if errorlevel 1 (
 echo [SUCCESS] Docker daemon is running
 
 echo [INFO] Checking if simulator container exists...
+echo [DEBUG] Looking for container name: %CONTAINER_NAME%
+echo [DEBUG] All containers:
+docker ps -a --format "{{.Names}}" 
+echo [DEBUG] Running containers:
+docker ps --format "{{.Names}}"
 docker ps -a --format "{{.Names}}" | findstr /x "%CONTAINER_NAME%" >nul 2>&1
 if errorlevel 1 (
     echo [WARNING] Simulator container not found
     echo [INFO] Starting simulator for the first time...
     call "%SCRIPT_DIR%start_sim.bat"
     timeout /t 5 /nobreak >nul
+    echo [DEBUG] After starting, checking container status...
+    docker ps -a --filter "name=%CONTAINER_NAME%" --format "{{.Names}} {{.Status}}"
 ) else (
+    echo [DEBUG] Container found, checking if running...
     docker ps --format "{{.Names}}" | findstr /x "%CONTAINER_NAME%" >nul 2>&1
     if errorlevel 1 (
         echo [WARNING] Simulator container exists but is not running
+        echo [DEBUG] Container status:
+        docker ps -a --filter "name=%CONTAINER_NAME%" --format "{{.Names}} {{.Status}}"
         echo [INFO] Starting simulator...
         docker start %CONTAINER_NAME% >nul 2>&1
         timeout /t 3 /nobreak >nul
+        echo [DEBUG] After start command, container status:
+        docker ps --filter "name=%CONTAINER_NAME%" --format "{{.Names}} {{.Status}}"
     ) else (
         echo [INFO] Simulator container is already running
+        echo [DEBUG] Container details:
+        docker ps --filter "name=%CONTAINER_NAME%" --format "{{.Names}} {{.Status}} {{.ID}}"
     )
 )
 
@@ -92,15 +106,31 @@ echo ==========================================
 echo Step 2/4: Preparing Test Environment
 echo ==========================================
 echo [INFO] Copying your sender file into container...
-docker cp "%SENDER_FILE%" %CONTAINER_NAME%:/app/sender.py >nul 2>&1
+echo [DEBUG] Container name: %CONTAINER_NAME%
+echo [DEBUG] Sender file path: %SENDER_FILE%
+echo [DEBUG] Verifying container is running before copy...
+docker ps --filter "name=%CONTAINER_NAME%" --format "{{.Names}} {{.Status}}"
+echo [DEBUG] Executing: docker cp "%SENDER_FILE%" %CONTAINER_NAME%:/app/sender.py
+docker cp "%SENDER_FILE%" %CONTAINER_NAME%:/app/sender.py
+set "COPY_EXIT_CODE=%errorlevel%"
+echo [DEBUG] Copy command exit code: %COPY_EXIT_CODE%
 if errorlevel 1 (
     echo [ERROR] Failed to copy sender file into container
+    echo [DEBUG] Checking if container still exists...
+    docker ps -a --filter "name=%CONTAINER_NAME%" --format "{{.Names}} {{.Status}}"
+    echo [DEBUG] Attempting to verify container accessibility...
+    docker exec %CONTAINER_NAME% echo "Container is accessible" 2>&1
     exit /b 1
 )
 echo [SUCCESS] Sender file copied
 
 echo [INFO] Copying payload into container...
-docker cp "%PAYLOAD_SOURCE%" %CONTAINER_NAME%:%CONTAINER_PAYLOAD_FILE% >nul 2>&1
+echo [DEBUG] Payload source: %PAYLOAD_SOURCE%
+echo [DEBUG] Container destination: %CONTAINER_PAYLOAD_FILE%
+echo [DEBUG] Executing: docker cp "%PAYLOAD_SOURCE%" %CONTAINER_NAME%:%CONTAINER_PAYLOAD_FILE%
+docker cp "%PAYLOAD_SOURCE%" %CONTAINER_NAME%:%CONTAINER_PAYLOAD_FILE%
+set "PAYLOAD_COPY_EXIT=%errorlevel%"
+echo [DEBUG] Payload copy exit code: %PAYLOAD_COPY_EXIT%
 if errorlevel 1 (
     echo [ERROR] Failed to copy payload file into container
     exit /b 1

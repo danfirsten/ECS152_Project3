@@ -1,0 +1,2 @@
+- (Dan) is working on windows and was having trouble getting the original test_sender.bat sender_skeleton.py to work
+    - Solution was switching docker-script.sh and training_profile.sh to LF instead of CRLF and then saving and restarting the container
