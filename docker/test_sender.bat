@@ -23,7 +23,7 @@ if not exist "%SENDER_FILE%" (
 set "PAYLOAD_ARG=%~2"
 if "%PAYLOAD_ARG%"=="" set "PAYLOAD_ARG=file.zip"
 
-if not defined NUM_RUNS set "NUM_RUNS=1"
+if not defined NUM_RUNS set "NUM_RUNS=10"
 if not defined RECEIVER_PORT set "RECEIVER_PORT=5001"
 
 call :resolve_payload "%PAYLOAD_ARG%" PAYLOAD_SOURCE
@@ -123,6 +123,19 @@ if errorlevel 1 (
     exit /b 1
 )
 echo [SUCCESS] Sender file copied
+
+echo [INFO] Copying senders package into container...
+echo [DEBUG] Senders folder path: %SCRIPT_DIR%..\senders
+echo [DEBUG] Executing: docker cp "%SCRIPT_DIR%..\senders" %CONTAINER_NAME%:/app/senders
+docker cp "%SCRIPT_DIR%..\senders" %CONTAINER_NAME%:/app/senders
+set "SENDERS_COPY_EXIT=%errorlevel%"
+echo [DEBUG] Senders copy exit code: %SENDERS_COPY_EXIT%
+if errorlevel 1 (
+    echo [ERROR] Failed to copy senders package into container
+    exit /b 1
+)
+echo [SUCCESS] Senders package copied to /app/senders
+
 
 echo [INFO] Copying payload into container...
 echo [DEBUG] Payload source: %PAYLOAD_SOURCE%

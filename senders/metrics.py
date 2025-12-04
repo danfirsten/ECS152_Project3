@@ -130,16 +130,27 @@ class TransferMetrics:
         return variance ** 0.5
     
     def get_score(self) -> float:
-        """Calculate performance score."""
-        # TODO: need to check what the actual score formula is
-        # placeholder: throughput/delay ratio
+        """
+        Calculate performance metric from project spec.
+        
+        Metric = (Throughput / 2000) + (15 / Average Jitter) + (35 / Average delay per packet)
+        """
         throughput = self.get_throughput()
-        delay = self.get_avg_delay()
+        avg_delay = self.get_avg_delay()
+        avg_jitter = self.get_avg_jitter()
         
-        if delay == 0:
-            return 0.0
+        # Metric = (Throughput / 2000) + (15 / Jitter) + (35 / Delay)
+        metric = (throughput / 2000.0)
         
-        return throughput / (1.0 + delay * 1000.0)  # delay in ms
+        # add jitter component (avoid division by zero)
+        if avg_jitter > 0:
+            metric += 15.0 / avg_jitter
+        
+        # add delay component (avoid division by zero)
+        if avg_delay > 0:
+            metric += 35.0 / avg_delay
+        
+        return metric
     
     def format_csv(self) -> str:
         """Format as CSV: throughput,avg_delay,avg_jitter,score"""
